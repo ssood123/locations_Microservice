@@ -1,5 +1,11 @@
 # locations Microservice
 
+#### GET /seed
+Delete all entries in the database and initialize the database with initial (sample) entries
+
+#### GET /test
+Test the connection
+
 #### GET /locations
 Get a location of all timezones
 
