@@ -209,6 +209,24 @@ app.delete('/locations/:timezone/students/:student', async (req, res) => {
 	}	
 })
 
+app.get('/locations/:id/id', async (req, res) => {
+	const location = await pool.query(`SELECT * FROM ${databaseTableName} where locationID = ?`,[req.params.id])
+	if (location[0][0]) {
+		let sendResponse = {}
+		sendResponse['statusCode'] = 200
+		sendResponse['data'] = location[0][0]
+		let HATEOASlinks = []
+		HATEOASlinks.push({"href": `/locations/${req.params.id}/id`, "rel" : "self", "type" : "GET"})
+		sendResponse['links'] = HATEOASlinks
+		res.status(200).json(sendResponse)
+	} else {
+		let sendResponse = {}
+		sendResponse['statusCode'] = 400
+		sendResponse['message'] = "location with given id does not exist"
+		res.status(400).json(sendResponse)
+	}
+})
+
 
 app.use((err, req, res, next) => {
 	console.error(err.stack)
