@@ -1,4 +1,4 @@
-//Test 1
+//Test 2
 import mysql from 'mysql2'
 
 import dotenv from 'dotenv'
