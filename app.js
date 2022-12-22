@@ -35,8 +35,14 @@ app.get('/test', async (req, res) => {
 app.get('/locations', async (req, res) => {
 	const locations = await pool.query(`SELECT * FROM ${databaseTableName}`)
 	let filteredLocations = []
-	for (let i = 0; i < locations[0].length; i++) {
-		filteredLocations.push(locations[0][i].timezone)
+	if (req.query.limit && req.query.offset) {
+		for (let i = parseInt(req.query.offset); i < parseInt(req.query.offset) + parseInt(req.query.limit); i++) {
+			filteredLocations.push(locations[0][i].timezone)
+		}
+	} else {
+		for (let i = 0; i < locations[0].length; i++) {
+			filteredLocations.push(locations[0][i].timezone)
+		}
 	}
 	let sendResponse = {}
 	sendResponse['statusCode'] = 200
@@ -78,7 +84,17 @@ app.get('/locations/:timezone/countries', async (req, res) => {
 	if (location[0][0]) {
 		let sendResponse = {}
 		sendResponse['statusCode'] = 200
-		sendResponse['data'] = location[0][0].countries
+		let filteredCountries = []
+		if (req.query.offset && req.query.limit) {
+			let tempCountries = location[0][0].countries.split(', ')
+			for (let i = parseInt(req.query.offset); i < parseInt(req.query.offset) + parseInt(req.query.limit); i++) {
+				filteredCountries.push(tempCountries[i])
+			}
+			filteredCountries = filteredCountries.join(', ')
+		} else {
+			filteredCountries = location[0][0].countries
+		}
+		sendResponse['data'] = filteredCountries
 		let HATEOASlinks = []
 		HATEOASlinks.push({"href" : `/locations/${req.params.timezone}/countries`, "rel": "self", "type": "GET"})
 		HATEOASlinks.push({"href" : `/locations/${req.params.timezone}/students`, "rel": "students", "type": "GET"})
@@ -146,7 +162,17 @@ app.get('/locations/:timezone/students', async (req, res) => {
 	if (location[0][0]) {
 		let sendResponse = {}
 		sendResponse['statusCode'] = 200
-		sendResponse['data'] = location[0][0].students
+		let filteredStudents = []
+		if (req.query.offset && req.query.limit) {
+			let tempStudents = location[0][0].students.split(', ')
+			for (let i = parseInt(req.query.offset); i < parseInt(req.query.offset) + parseInt(req.query.limit); i++) {
+				filteredStudents.push(tempStudents[i])
+			}
+			filteredStudents = filteredStudents.join(', ')
+		} else {
+			filteredStudents = location[0][0].students
+		}
+		sendResponse['data'] = filteredStudents
 		let HATEOASlinks = []
 		HATEOASlinks.push({"href" : `/locations/${req.params.timezone}/students`, "rel": "self", "type": "GET"})
 		HATEOASlinks.push({"href" : `/locations/${req.params.timezone}/countries`, "rel": "countries", "type": "GET"})
