@@ -35,8 +35,9 @@ app.get('/test', async (req, res) => {
 app.get('/locations', async (req, res) => {
 	const locations = await pool.query(`SELECT * FROM ${databaseTableName}`)
 	let filteredLocations = []
-	if (req.query.limit && req.query.offset) {
-		for (let i = parseInt(req.query.offset); i < parseInt(req.query.offset) + parseInt(req.query.limit); i++) {
+	if (req.query.limit) {
+		let offset = req.query.offset ? parseInt(req.query.offset) : 0
+		for (let i = offset; i < offset + parseInt(req.query.limit); i++) {
 			filteredLocations.push(locations[0][i].timezone)
 		}
 	} else {
@@ -85,9 +86,10 @@ app.get('/locations/:timezone/countries', async (req, res) => {
 		let sendResponse = {}
 		sendResponse['statusCode'] = 200
 		let filteredCountries = []
-		if (req.query.offset && req.query.limit) {
+		if (req.query.limit) {
+			let offset = req.query.offset ? parseInt(req.query.offset) : 0
 			let tempCountries = location[0][0].countries.split(', ')
-			for (let i = parseInt(req.query.offset); i < parseInt(req.query.offset) + parseInt(req.query.limit); i++) {
+			for (let i = offset; i < offset + parseInt(req.query.limit); i++) {
 				filteredCountries.push(tempCountries[i])
 			}
 			filteredCountries = filteredCountries.join(', ')
@@ -163,9 +165,10 @@ app.get('/locations/:timezone/students', async (req, res) => {
 		let sendResponse = {}
 		sendResponse['statusCode'] = 200
 		let filteredStudents = []
-		if (req.query.offset && req.query.limit) {
+		if (req.query.limit) {
+			let offset = req.query.offset ? parseInt(req.query.offset) : 0
 			let tempStudents = location[0][0].students.split(', ')
-			for (let i = parseInt(req.query.offset); i < parseInt(req.query.offset) + parseInt(req.query.limit); i++) {
+			for (let i = offset; i < offset + parseInt(req.query.limit); i++) {
 				filteredStudents.push(tempStudents[i])
 			}
 			filteredStudents = filteredStudents.join(', ')
